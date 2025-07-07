@@ -329,7 +329,6 @@
     // Disable right-click
         document.addEventListener('contextmenu', function(e) {
             e.preventDefault();
-            alert('Viewing source is disabled');
         });
 
         // Disable keyboard shortcuts
@@ -338,7 +337,6 @@
                 (e.ctrlKey && e.shiftKey && e.key === 'I') || 
                 (e.ctrlKey && e.key === 'U')) {
                 e.preventDefault();
-                alert('Developer tools are disabled');
             }
         });
     // Achievements data
