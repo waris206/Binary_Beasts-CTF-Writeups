@@ -1,4 +1,4 @@
-# 🧠 Binary_Beasts CTF Writeups
+#  Binary_Beasts CTF Writeups
 
 Welcome to the official writeup archive of **Binary_Beasts**, a cybersecurity team passionate about learning, solving, and sharing CTF knowledge.
 
