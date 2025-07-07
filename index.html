@@ -4,18 +4,448 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Team Binary_Beasts - CTF Writeups | Cybersecurity Solutions</title>
-  <meta name="description" content="Cutting-edge CTF writeups and cybersecurity insights from Team X. Join us as we break down challenges from top competitions.">
+  <meta name="description" content="Cutting-edge CTF writeups and cybersecurity insights from Team Binary_Beasts. Join us as we break down challenges from top competitions.">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <link rel="stylesheet" href="style.css">
+  <style>
+    :root {
+      --neon-blue: #0ff0fc;
+      --neon-purple: #bc13fe;
+      --dark-bg: #0a0a0a;
+      --darker-bg: #050505;
+      --text-primary: #e0e0e0;
+      --text-secondary: #b0b0b0;
+      --accent: #ff5555;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Segoe UI', 'Roboto', 'Oxygen', sans-serif;
+      background-color: var(--dark-bg);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    
+    header {
+      background: linear-gradient(135deg, var(--darker-bg) 0%, #111 100%);
+      padding: 1.5rem;
+      border-bottom: 1px solid rgba(11, 255, 252, 0.1);
+      box-shadow: 0 0 15px rgba(11, 255, 252, 0.2);
+      position: relative;
+      z-index: 10;
+    }
+    
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 5px rgba(11, 255, 252, 0.3);
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+    
+    .tagline {
+      color: var(--text-secondary);
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
+      font-style: italic;
+    }
+    
+    nav {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+    
+    nav a {
+      color: var(--text-primary);
+      text-decoration: none;
+      font-weight: 600;
+      padding: 0.5rem 0;
+      position: relative;
+      transition: all 0.3s ease;
+      letter-spacing: 0.5px;
+    }
+    
+    nav a:hover {
+      color: var(--neon-blue);
+    }
+    
+    nav a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+      transition: width 0.3s ease;
+    }
+    
+    nav a:hover::after {
+      width: 100%;
+    }
+    
+    main {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+    
+    .hero {
+      text-align: center;
+      padding: 3rem 1rem;
+      margin-bottom: 3rem;
+      position: relative;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(11, 22, 33, 0.7) 0%, rgba(0, 0, 0, 0.9) 100%);
+      z-index: -1;
+    }
+    
+    .hero::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      right: -50%;
+      bottom: -50%;
+      background: linear-gradient(
+        to bottom right,
+        rgba(11, 255, 252, 0.1) 0%,
+        rgba(188, 19, 254, 0.1) 100%
+      );
+      animation: gradientBG 15s ease infinite;
+      z-index: -2;
+    }
+    
+    @keyframes gradientBG {
+      0% { transform: rotate(0deg); }
+      50% { transform: rotate(180deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    h2 {
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+      color: var(--neon-blue);
+      font-weight: 700;
+    }
+    
+    .hero h2 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    p {
+      margin-bottom: 1.5rem;
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    .hero p {
+      font-size: 1.2rem;
+      color: var(--text-primary);
+    }
+    
+    .cta-button {
+      display: inline-block;
+      background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+      color: black;
+      padding: 0.8rem 2rem;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 700;
+      margin-top: 1.5rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 15px rgba(11, 255, 252, 0.5);
+    }
+    
+    .cta-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 0 25px rgba(11, 255, 252, 0.8);
+    }
+    
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin: 3rem 0;
+    }
+    
+    .feature-card {
+      background: rgba(20, 20, 20, 0.7);
+      border: 1px solid rgba(11, 255, 252, 0.1);
+      border-radius: 8px;
+      padding: 2rem;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .feature-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+      border-color: rgba(11, 255, 252, 0.3);
+    }
+    
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+    }
+    
+    .feature-card h3 {
+      color: var(--neon-blue);
+      margin-bottom: 1rem;
+      font-size: 1.3rem;
+    }
+    
+    .feature-card i {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      color: var(--neon-purple);
+    }
+    
+    /* Writeups Section */
+    .writeups-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 2rem;
+      margin: 3rem 0;
+    }
+    
+    .writeup-card {
+      background: rgba(20, 20, 20, 0.7);
+      border: 1px solid rgba(11, 255, 252, 0.1);
+      border-radius: 8px;
+      padding: 1.5rem;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .writeup-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+      border-color: rgba(11, 255, 252, 0.3);
+    }
+    
+    .writeup-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(90deg, var(--neon-purple), var(--neon-blue));
+    }
+    
+    .writeup-card h3 {
+      color: var(--neon-blue);
+      margin-bottom: 0.5rem;
+      font-size: 1.2rem;
+    }
+    
+    .writeup-meta {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+    
+    .writeup-difficulty {
+      display: inline-block;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-weight: bold;
+    }
+    
+    .difficulty-easy {
+      background-color: rgba(0, 255, 0, 0.1);
+      color: #00ff00;
+    }
+    
+    .difficulty-medium {
+      background-color: rgba(255, 165, 0, 0.1);
+      color: #ffa500;
+    }
+    
+    .difficulty-hard {
+      background-color: rgba(255, 0, 0, 0.1);
+      color: #ff5555;
+    }
+    
+    .writeup-description {
+      margin-bottom: 1rem;
+      font-size: 0.95rem;
+    }
+    
+    .writeup-link {
+      display: inline-block;
+      color: var(--neon-purple);
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    
+    .writeup-link:hover {
+      color: var(--neon-blue);
+      text-decoration: underline;
+    }
+    
+    .writeup-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+    
+    .writeup-tag {
+      background: rgba(11, 255, 252, 0.1);
+      color: var(--neon-blue);
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+    }
+    
+    .filter-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      align-items: center;
+    }
+    
+    .filter-label {
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+    
+    .filter-select {
+      background: var(--darker-bg);
+      color: var(--text-primary);
+      border: 1px solid rgba(11, 255, 252, 0.3);
+      padding: 0.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    
+    .filter-select:focus {
+      outline: none;
+      border-color: var(--neon-blue);
+    }
+    
+    .no-writeups {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 2rem;
+      color: var(--text-secondary);
+    }
+    
+    footer {
+      background: var(--darker-bg);
+      padding: 2rem 1rem;
+      text-align: center;
+      border-top: 1px solid rgba(11, 255, 252, 0.1);
+      margin-top: 3rem;
+    }
+    
+    .social-links {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    
+    .social-links a {
+      color: var(--text-secondary);
+      font-size: 1.5rem;
+      transition: all 0.3s ease;
+    }
+    
+    .social-links a:hover {
+      color: var(--neon-blue);
+      transform: translateY(-3px);
+    }
+    
+    .copyright {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2rem;
+      }
+      
+      h2 {
+        font-size: 1.5rem;
+      }
+      
+      .hero {
+        padding: 2rem 1rem;
+      }
+      
+      .header-content {
+        align-items: center;
+        text-align: center;
+      }
+      
+      nav {
+        justify-content: center;
+      }
+      
+      .writeups-container {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 <body>
   <header>
     <div class="header-content">
-      <h1>Team X</h1>
+      <h1>Team Binary_Beasts</h1>
       <p class="tagline">Pushing the boundaries of cybersecurity</p>
       <nav>
         <a href="index.html"><i class="fas fa-home"></i> Home</a>
         <a href="#latest-writeups"><i class="fas fa-flag"></i> Writeups</a>
+        <a href="achievements.html"><i class="fas fa-trophy"></i> Achievements</a>
         <a href="about.html"><i class="fas fa-users"></i> About Us</a>
         <a href="contact.html"><i class="fas fa-envelope"></i> Contact</a>
       </nav>
@@ -25,7 +455,7 @@
   <main>
     <section class="hero">
       <h2>CTF Writeups & Cybersecurity Insights</h2>
-      <p>Welcome to Team X's knowledge hub, where we break down complex security challenges into digestible solutions. Whether you're a beginner or an experienced hacker, our writeups will help you level up your skills.</p>
+      <p>Welcome to Team Binary_Beasts's knowledge hub, where we break down complex security challenges into digestible solutions. Whether you're a beginner or an experienced hacker, our writeups will help you level up your skills.</p>
       <a href="#latest-writeups" class="cta-button">Explore Latest Writeups</a>
     </section>
 
@@ -73,7 +503,7 @@
       <a href="#" aria-label="Discord"><i class="fab fa-discord"></i></a>
       <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
     </div>
-    <p class="copyright">© 2025 Team X | Cybersecurity Research Group | All rights reserved.</p>
+    <p class="copyright">© 2025 Team Binary_Beasts | Cybersecurity Research Group | All rights reserved.</p>
   </footer>
 
   <script>

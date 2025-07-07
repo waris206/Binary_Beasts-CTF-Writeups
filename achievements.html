@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Team X Achievements | CTF Competition Results</title>
+  <meta name="description" content="Explore Team X's cybersecurity competition achievements, rankings, and notable performances in major CTF events.">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Achievements-specific styles */
+    .achievements-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    
+    .timeline {
+      position: relative;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .timeline::after {
+      content: '';
+      position: absolute;
+      width: 4px;
+      background: linear-gradient(to bottom, var(--neon-purple), var(--neon-blue));
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      margin-left: -2px;
+      border-radius: 2px;
+    }
+    
+    .achievement-container {
+      padding: 10px 40px;
+      position: relative;
+      background-color: inherit;
+      width: 50%;
+    }
+    
+    .achievement-container::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      right: -10px;
+      background-color: var(--neon-purple);
+      border: 3px solid var(--neon-blue);
+      top: 15px;
+      border-radius: 50%;
+      z-index: 1;
+      box-shadow: 0 0 10px rgba(188, 19, 254, 0.8);
+    }
+    
+    .left {
+      left: 0;
+    }
+    
+    .right {
+      left: 50%;
+    }
+    
+    .left::before {
+      content: " ";
+      height: 0;
+      position: absolute;
+      top: 22px;
+      width: 0;
+      z-index: 1;
+      right: 30px;
+      border: medium solid rgba(11, 255, 252, 0.3);
+      border-width: 10px 0 10px 10px;
+      border-color: transparent transparent transparent rgba(11, 255, 252, 0.3);
+    }
+    
+    .right::before {
+      content: " ";
+      height: 0;
+      position: absolute;
+      top: 22px;
+      width: 0;
+      z-index: 1;
+      left: 30px;
+      border: medium solid rgba(11, 255, 252, 0.3);
+      border-width: 10px 10px 10px 0;
+      border-color: transparent rgba(11, 255, 252, 0.3) transparent transparent;
+    }
+    
+    .right::after {
+      left: -10px;
+    }
+    
+    .achievement-content {
+      padding: 20px 30px;
+      background: rgba(20, 20, 20, 0.7);
+      border: 1px solid rgba(11, 255, 252, 0.1);
+      border-radius: 8px;
+      position: relative;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+    }
+    
+    .achievement-content:hover {
+      border-color: rgba(11, 255, 252, 0.3);
+      transform: translateY(-3px);
+    }
+    
+    .achievement-content h3 {
+      color: var(--neon-blue);
+      margin-bottom: 0.5rem;
+    }
+    
+    .achievement-date {
+      color: var(--neon-purple);
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+    
+    .achievement-rank {
+      display: inline-block;
+      background: rgba(11, 255, 252, 0.1);
+      color: var(--neon-blue);
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-weight: bold;
+      margin-bottom: 1rem;
+      border: 1px solid var(--neon-blue);
+    }
+    
+    .achievement-image {
+      margin-top: 1rem;
+      border-radius: 5px;
+      overflow: hidden;
+      border: 1px solid rgba(11, 255, 252, 0.2);
+    }
+    
+    .achievement-image img {
+      width: 100%;
+      height: auto;
+      display: block;
+      transition: transform 0.3s ease;
+    }
+    
+    .achievement-image:hover img {
+      transform: scale(1.03);
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      margin: 3rem 0;
+    }
+    
+    .stat-card {
+      background: rgba(20, 20, 20, 0.7);
+      border: 1px solid rgba(11, 255, 252, 0.1);
+      border-radius: 8px;
+      padding: 2rem;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    
+    .stat-card:hover {
+      border-color: rgba(11, 255, 252, 0.3);
+      transform: translateY(-5px);
+    }
+    
+    .stat-number {
+      font-size: 3rem;
+      font-weight: bold;
+      background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 0.5rem;
+    }
+    
+    .stat-label {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+    }
+    
+    .filter-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      align-items: center;
+    }
+    
+    .filter-label {
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+    
+    .filter-select {
+      background: var(--darker-bg);
+      color: var(--text-primary);
+      border: 1px solid rgba(11, 255, 252, 0.3);
+      padding: 0.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    
+    .filter-select:focus {
+      outline: none;
+      border-color: var(--neon-blue);
+    }
+    
+    @media screen and (max-width: 768px) {
+      .timeline::after {
+        left: 31px;
+      }
+      
+      .achievement-container {
+        width: 100%;
+        padding-left: 70px;
+        padding-right: 25px;
+      }
+      
+      .achievement-container::before {
+        left: 60px;
+        border: medium solid rgba(11, 255, 252, 0.3);
+        border-width: 10px 10px 10px 0;
+        border-color: transparent rgba(11, 255, 252, 0.3) transparent transparent;
+      }
+      
+      .left::after, .right::after {
+        left: 21px;
+      }
+      
+      .right {
+        left: 0%;
+      }
+      
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <h1>Team X</h1>
+      <p class="tagline">Pushing the boundaries of cybersecurity</p>
+      <nav>
+        <a href="index.html"><i class="fas fa-home"></i> Home</a>
+        <a href="index.html#latest-writeups"><i class="fas fa-flag"></i> Writeups</a>
+        <a href="achievements.html"><i class="fas fa-trophy"></i> Achievements</a>
+        <a href="about.html"><i class="fas fa-users"></i> About Us</a>
+        <a href="contact.html"><i class="fas fa-envelope"></i> Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h2>Our Achievements</h2>
+      <p>Celebrating our journey through competitive cybersecurity and notable accomplishments in CTF competitions worldwide.</p>
+    </section>
+
+    <section>
+      <div class="achievements-header">
+        <h2>Competition Highlights</h2>
+        <p>Here are some of our most notable performances in major CTF events</p>
+      </div>
+      
+      <div class="stats-grid" id="stats-container">
+        <!-- Stats will be dynamically inserted here -->
+      </div>
+      
+      <div class="filter-controls">
+        <span class="filter-label">Filter by:</span>
+        <select id="year-filter" class="filter-select">
+          <option value="all">All Years</option>
+          <!-- Year options will be dynamically inserted -->
+        </select>
+        
+        <select id="ctf-filter" class="filter-select">
+          <option value="all">All CTFs</option>
+          <!-- CTF options will be dynamically inserted -->
+        </select>
+        
+        <select id="placement-filter" class="filter-select">
+          <option value="all">All Placements</option>
+          <option value="1">1st Place</option>
+          <option value="2">2nd Place</option>
+          <option value="3">3rd Place</option>
+          <option value="top10">Top 10</option>
+          <option value="top100">Top 100</option>
+        </select>
+      </div>
+      
+      <div class="timeline" id="achievements-container">
+        <!-- Achievements will be dynamically inserted here -->
+      </div>
+    </section>
+    
+    <section style="margin-top: 5rem;">
+      <h2>Other Notable Performances</h2>
+      <div class="features" id="featured-achievements">
+        <!-- Featured achievements will be dynamically inserted here -->
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="social-links">
+      <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+      <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
+      <a href="#" aria-label="Discord"><i class="fab fa-discord"></i></a>
+      <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+    </div>
+    <p class="copyright">© 2025 Team X | Cybersecurity Research Group | All rights reserved.</p>
+  </footer>
+
+  <script>
+    // Achievements data - you can easily add/edit/remove achievements here
+    const achievementsData = {
+      // Stats will be calculated automatically
+      stats: {},
+      
+      timeline: [
+        {
+          id: 1,
+          title: "Blitz CTF 2025",
+          date: "JULY 2025",
+          placement: "159 Place Overall",
+          placementValue: 1,
+          description: "Dominating performance with perfect scores in misc category  and cryptography categories.",
+          image: "blitz.jpg",
+          alt: "Blitz CTF 2025 Final Scoreboard",
+          ctf: "Blitz",
+          year: 2025,
+          featured: true
+        },
+        {
+          id: 2,
+          title: "JUNIOR CRYPT 2025",
+          date: "JULE 2025",
+          placement: "96 Place Overall",
+          placementValue: 15,
+          description: "Strong showing in one of the most competitive CTF events.",
+          image: "junior_crypt.jpg",
+          alt: "JUNIOR CRYPT CTF Qualifiers Scoreboard",
+          ctf: "JUNIOR CRYPT",
+          year: 2025,
+          featured: true
+        },
+      ],
+      featured: []
+    };
+
+    // Function to calculate stats from achievements data
+    function calculateStats() {
+  const timelineCTFs = achievementsData.timeline.length;
+  const featuredCTFs = achievementsData.featured ? achievementsData.featured.length : 0;
+  const totalCTFs = timelineCTFs + featuredCTFs;
+  
+  // Get top placements
+  const topPlacements = achievementsData.timeline.filter(a => a.placementValue <= 10).length;
+  const bestPlacement = achievementsData.timeline.length > 0 ? 
+    Math.min(...achievementsData.timeline.map(a => a.placementValue)) : 0;
+  
+  // Update stats object
+  achievementsData.stats = {
+    totalCTFs: totalCTFs,
+    timelineCTFs: timelineCTFs,
+    featuredCTFs: featuredCTFs,
+    top10Finishes: topPlacements,
+    bestPlacement: bestPlacement > 0 ? this.ordinalSuffix(bestPlacement) : "N/A",
+    challengesSolved: 42,
+    countriesCompeted: 5
+  };
+}
+    
+    // Helper function to add ordinal suffix (1st, 2nd, 3rd, etc.)
+    function ordinalSuffix(i) {
+      const j = i % 10,
+            k = i % 100;
+      if (j == 1 && k != 11) {
+        return i + "st";
+      }
+      if (j == 2 && k != 12) {
+        return i + "nd";
+      }
+      if (j == 3 && k != 13) {
+        return i + "rd";
+      }
+      return i + "th";
+    }
+
+    // Function to render stats
+    function renderStats() {
+      calculateStats(); // Recalculate stats first
+      const container = document.getElementById('stats-container');
+      const stats = achievementsData.stats;
+      
+      container.innerHTML = `
+        <div class="stat-card">
+          <div class="stat-number">${stats.totalCTFs}</div>
+          <div class="stat-label">Total CTF Events</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">${stats.timelineCTFs}</div>
+          <div class="stat-label">Featured CTFs</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">${stats.top10Finishes}</div>
+          <div class="stat-label">Top 10 Finishes</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">${stats.bestPlacement}</div>
+          <div class="stat-label">Best Placement</div>
+        </div>
+      `;
+    }
+
+    // Function to render timeline achievements
+    function renderAchievements(filteredAchievements) {
+      const container = document.getElementById('achievements-container');
+      container.innerHTML = '';
+      
+      if (filteredAchievements.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No achievements match the selected filters.</p>';
+        return;
+      }
+      
+      filteredAchievements.forEach((achievement, index) => {
+        const positionClass = index % 2 === 0 ? 'left' : 'right';
+        
+        const achievementElement = document.createElement('div');
+        achievementElement.className = `achievement-container ${positionClass}`;
+        achievementElement.innerHTML = `
+          <div class="achievement-content">
+            <div class="achievement-date">${achievement.date}</div>
+            <h3>${achievement.title}</h3>
+            <span class="achievement-rank">${achievement.placement}</span>
+            <p>${achievement.description}</p>
+            ${achievement.image ? `
+              <div class="achievement-image">
+                <img src="${achievement.image}" alt="${achievement.alt || achievement.title}">
+              </div>
+            ` : ''}
+          </div>
+        `;
+        
+        container.appendChild(achievementElement);
+      });
+    }
+
+    // Function to render featured achievements
+    function renderFeaturedAchievements() {
+      const container = document.getElementById('featured-achievements');
+      
+      container.innerHTML = achievementsData.featured.map(achievement => `
+        <div class="feature-card">
+          <i class="${achievement.icon}"></i>
+          <h3>${achievement.title}</h3>
+          <p>${achievement.description}</p>
+        </div>
+      `).join('');
+    }
+
+    // Function to populate filter options
+    function populateFilters() {
+      const yearFilter = document.getElementById('year-filter');
+      const ctfFilter = document.getElementById('ctf-filter');
+      
+      // Get unique years and CTFs
+      const years = [...new Set(achievementsData.timeline.map(a => a.year))].sort((a, b) => b - a);
+      const ctfs = [...new Set(achievementsData.timeline.map(a => a.ctf))].sort();
+      
+      // Add year options
+      years.forEach(year => {
+        const option = document.createElement('option');
+        option.value = year;
+        option.textContent = year;
+        yearFilter.appendChild(option);
+      });
+      
+      // Add CTF options
+      ctfs.forEach(ctf => {
+        const option = document.createElement('option');
+        option.value = ctf;
+        option.textContent = ctf;
+        ctfFilter.appendChild(option);
+      });
+    }
+
+    // Function to filter achievements
+    function filterAchievements() {
+      const yearFilter = document.getElementById('year-filter').value;
+      const ctfFilter = document.getElementById('ctf-filter').value;
+      const placementFilter = document.getElementById('placement-filter').value;
+      
+      let filtered = achievementsData.timeline;
+      
+      if (yearFilter !== 'all') {
+        filtered = filtered.filter(a => a.year == yearFilter);
+      }
+      
+      if (ctfFilter !== 'all') {
+        filtered = filtered.filter(a => a.ctf === ctfFilter);
+      }
+      
+      if (placementFilter !== 'all') {
+        switch(placementFilter) {
+          case '1':
+            filtered = filtered.filter(a => a.placementValue === 1);
+            break;
+          case '2':
+            filtered = filtered.filter(a => a.placementValue === 2);
+            break;
+          case '3':
+            filtered = filtered.filter(a => a.placementValue === 3);
+            break;
+          case 'top10':
+            filtered = filtered.filter(a => a.placementValue <= 10);
+            break;
+          case 'top100':
+            filtered = filtered.filter(a => a.placementValue <= 100);
+            break;
+        }
+      }
+      
+      renderAchievements(filtered);
+    }
+
+    // Initialize the page
+    document.addEventListener('DOMContentLoaded', () => {
+      renderStats();
+      renderAchievements(achievementsData.timeline);
+      renderFeaturedAchievements();
+      populateFilters();
+      
+      // Add event listeners to filters
+      document.getElementById('year-filter').addEventListener('change', filterAchievements);
+      document.getElementById('ctf-filter').addEventListener('change', filterAchievements);
+      document.getElementById('placement-filter').addEventListener('change', filterAchievements);
+    });
+
+    // Function to add a new achievement (you can call this from browser console if needed)
+    function addAchievement(newAchievement, type = 'timeline') {
+      if (type === 'timeline') {
+        achievementsData.timeline.push(newAchievement);
+        filterAchievements();
+      } else if (type === 'featured') {
+        achievementsData.featured.push(newAchievement);
+        renderFeaturedAchievements();
+      }
+      
+      // Re-populate filters if needed and update stats
+      if (type === 'timeline') {
+        populateFilters();
+      }
+      renderStats();
+    }
+  </script>
+</body>
+</html>
