@@ -249,8 +249,8 @@
       <nav>
         <a href="index.html"><i class="fas fa-home"></i> Home</a>
         <a href="index.html#latest-writeups"><i class="fas fa-flag"></i> Writeups</a>
-        <a href="achievements.html"><i class="fas fa-envelope"></i> Achievements</a>
         <a href="about.html"><i class="fas fa-users"></i> About Us</a>
+        <a href="achievements.html"><i class="fas fa-trophy"></i> Achievements</a>
         <a href="contact.html"><i class="fas fa-envelope"></i> Contact</a>
       </nav>
     </div>
@@ -320,13 +320,8 @@
   <script>
     // Achievements data - you can easily add/edit/remove achievements here
     const achievementsData = {
-      stats: {
-        totalEvents: 12,
-        top10Finishes: 3,
-        bestPlacement: "1st",
-        challengesSolved: 42,
-        countriesCompeted: 5
-      },
+      // Stats will be calculated automatically
+      stats: {},
       
       timeline: [
         {
@@ -336,7 +331,7 @@
           placement: "1st Place Overall",
           placementValue: 1,
           description: "Dominating performance with perfect scores in web exploitation and cryptography categories. Our team solved all challenges with 6 hours remaining.",
-          image: "https://example.com/blitz-ctf-2024-screenshot.jpg",
+          image: "blitz.jpg",
           alt: "Blitz CTF 2024 Final Scoreboard",
           ctf: "Blitz",
           year: 2024,
@@ -418,15 +413,58 @@
       ]
     };
 
+    // Function to calculate stats from achievements data
+    function calculateStats() {
+      const timelineCTFs = achievementsData.timeline.length;
+      const featuredCTFs = achievementsData.featured.length;
+      const totalCTFs = timelineCTFs + featuredCTFs;
+      
+      // Get top placements
+      const topPlacements = achievementsData.timeline.filter(a => a.placementValue <= 10).length;
+      const bestPlacement = Math.min(...achievementsData.timeline.map(a => a.placementValue));
+      
+      // Update stats object
+      achievementsData.stats = {
+        totalCTFs: totalCTFs,
+        timelineCTFs: timelineCTFs,
+        featuredCTFs: featuredCTFs,
+        top10Finishes: topPlacements,
+        bestPlacement: this.ordinalSuffix(bestPlacement),
+        challengesSolved: 42, // You can update this manually or calculate if you have the data
+        countriesCompeted: 5   // You can update this manually
+      };
+    }
+    
+    // Helper function to add ordinal suffix (1st, 2nd, 3rd, etc.)
+    function ordinalSuffix(i) {
+      const j = i % 10,
+            k = i % 100;
+      if (j == 1 && k != 11) {
+        return i + "st";
+      }
+      if (j == 2 && k != 12) {
+        return i + "nd";
+      }
+      if (j == 3 && k != 13) {
+        return i + "rd";
+      }
+      return i + "th";
+    }
+
     // Function to render stats
     function renderStats() {
+      calculateStats(); // Recalculate stats first
       const container = document.getElementById('stats-container');
       const stats = achievementsData.stats;
       
       container.innerHTML = `
         <div class="stat-card">
-          <div class="stat-number">${stats.totalEvents}</div>
-          <div class="stat-label">CTF Events Competed</div>
+          <div class="stat-number">${stats.totalCTFs}</div>
+          <div class="stat-label">Total CTF Events</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">${stats.timelineCTFs}</div>
+          <div class="stat-label">Featured CTFs</div>
         </div>
         <div class="stat-card">
           <div class="stat-number">${stats.top10Finishes}</div>
@@ -435,10 +473,6 @@
         <div class="stat-card">
           <div class="stat-number">${stats.bestPlacement}</div>
           <div class="stat-label">Best Placement</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number">${stats.challengesSolved}</div>
-          <div class="stat-label">Challenges Solved</div>
         </div>
       `;
     }
@@ -577,10 +611,11 @@
         renderFeaturedAchievements();
       }
       
-      // Re-populate filters if needed
+      // Re-populate filters if needed and update stats
       if (type === 'timeline') {
         populateFilters();
       }
+      renderStats();
     }
   </script>
 </body>
