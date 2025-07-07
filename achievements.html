@@ -350,30 +350,32 @@
           year: 2025,
           featured: true
         },
-      ]
+      ],
+      featured: []
     };
 
     // Function to calculate stats from achievements data
     function calculateStats() {
-      const timelineCTFs = achievementsData.timeline.length;
-      const featuredCTFs = achievementsData.featured.length;
-      const totalCTFs = timelineCTFs + featuredCTFs;
-      
-      // Get top placements
-      const topPlacements = achievementsData.timeline.filter(a => a.placementValue <= 10).length;
-      const bestPlacement = Math.min(...achievementsData.timeline.map(a => a.placementValue));
-      
-      // Update stats object
-      achievementsData.stats = {
-        totalCTFs: totalCTFs,
-        timelineCTFs: timelineCTFs,
-        featuredCTFs: featuredCTFs,
-        top10Finishes: topPlacements,
-        bestPlacement: this.ordinalSuffix(bestPlacement),
-        challengesSolved: 42, // You can update this manually or calculate if you have the data
-        countriesCompeted: 5   // You can update this manually
-      };
-    }
+  const timelineCTFs = achievementsData.timeline.length;
+  const featuredCTFs = achievementsData.featured ? achievementsData.featured.length : 0;
+  const totalCTFs = timelineCTFs + featuredCTFs;
+  
+  // Get top placements
+  const topPlacements = achievementsData.timeline.filter(a => a.placementValue <= 10).length;
+  const bestPlacement = achievementsData.timeline.length > 0 ? 
+    Math.min(...achievementsData.timeline.map(a => a.placementValue)) : 0;
+  
+  // Update stats object
+  achievementsData.stats = {
+    totalCTFs: totalCTFs,
+    timelineCTFs: timelineCTFs,
+    featuredCTFs: featuredCTFs,
+    top10Finishes: topPlacements,
+    bestPlacement: bestPlacement > 0 ? this.ordinalSuffix(bestPlacement) : "N/A",
+    challengesSolved: 42,
+    countriesCompeted: 5
+  };
+}
     
     // Helper function to add ordinal suffix (1st, 2nd, 3rd, etc.)
     function ordinalSuffix(i) {
