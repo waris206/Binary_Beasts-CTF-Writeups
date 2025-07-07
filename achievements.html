@@ -276,12 +276,10 @@
         <span class="filter-label">Filter by:</span>
         <select id="year-filter" class="filter-select">
           <option value="all">All Years</option>
-          <!-- Year options will be dynamically inserted -->
         </select>
         
         <select id="ctf-filter" class="filter-select">
           <option value="all">All CTFs</option>
-          <!-- CTF options will be dynamically inserted -->
         </select>
         
         <select id="placement-filter" class="filter-select">
@@ -291,6 +289,14 @@
           <option value="3">3rd Place</option>
           <option value="top10">Top 10</option>
           <option value="top100">Top 100</option>
+        </select>
+
+        <select id="sort-by" class="filter-select">
+          <option value="default">Sort by</option>
+          <option value="best">Best Placements First</option>
+          <option value="worst">Worst Placements First</option>
+          <option value="newest">Newest First</option>
+          <option value="oldest">Oldest First</option>
         </select>
       </div>
       
@@ -318,9 +324,8 @@
   </footer>
 
   <script>
-    // Achievements data - you can easily add/edit/remove achievements here
+    // Achievements data
     const achievementsData = {
-      // Stats will be calculated automatically
       stats: {},
       
       timeline: [
@@ -328,9 +333,9 @@
           id: 1,
           title: "Blitz CTF 2025",
           date: "JULY 2025",
-          placement: "159 Place Overall",
-          placementValue: 1,
-          description: "Dominating performance with perfect scores in misc category  and cryptography categories.",
+          placement: "159th Place Overall",
+          placementValue: 159,
+          description: "Dominating performance with perfect scores in misc category and cryptography categories.",
           image: "blitz.jpg",
           alt: "Blitz CTF 2025 Final Scoreboard",
           ctf: "Blitz",
@@ -340,13 +345,26 @@
         {
           id: 2,
           title: "JUNIOR CRYPT 2025",
-          date: "JULE 2025",
-          placement: "96 Place Overall",
-          placementValue: 15,
+          date: "JULY 2025",
+          placement: "96th Place Overall",
+          placementValue: 96,
           description: "Strong showing in one of the most competitive CTF events.",
           image: "junior_crypt.jpg",
-          alt: "JUNIOR CRYPT CTF Qualifiers Scoreboard",
+          alt: "JUNIOR CRYPT CTF Scoreboard",
           ctf: "JUNIOR CRYPT",
+          year: 2025,
+          featured: true
+        },
+        {
+          id: 3,
+          title: "CYBER ARENA 2025",
+          date: "JULY 2025",
+          placement: "10th Place Overall",
+          placementValue: 10,
+          description: "Shining as one of the top teams in the arena. Handling all the tasks alone.",
+          image: "cyber_arena.jpg",
+          alt: "Certificate of Cyber Arena",
+          ctf: "CYBER ARENA",
           year: 2025,
           featured: true
         },
@@ -356,26 +374,26 @@
 
     // Function to calculate stats from achievements data
     function calculateStats() {
-  const timelineCTFs = achievementsData.timeline.length;
-  const featuredCTFs = achievementsData.featured ? achievementsData.featured.length : 0;
-  const totalCTFs = timelineCTFs + featuredCTFs;
-  
-  // Get top placements
-  const topPlacements = achievementsData.timeline.filter(a => a.placementValue <= 10).length;
-  const bestPlacement = achievementsData.timeline.length > 0 ? 
-    Math.min(...achievementsData.timeline.map(a => a.placementValue)) : 0;
-  
-  // Update stats object
-  achievementsData.stats = {
-    totalCTFs: totalCTFs,
-    timelineCTFs: timelineCTFs,
-    featuredCTFs: featuredCTFs,
-    top10Finishes: topPlacements,
-    bestPlacement: bestPlacement > 0 ? this.ordinalSuffix(bestPlacement) : "N/A",
-    challengesSolved: 42,
-    countriesCompeted: 5
-  };
-}
+      const timelineCTFs = achievementsData.timeline.length;
+      const featuredCTFs = achievementsData.featured ? achievementsData.featured.length : 0;
+      const totalCTFs = timelineCTFs + featuredCTFs;
+      
+      // Get top placements
+      const topPlacements = achievementsData.timeline.filter(a => a.placementValue <= 10).length;
+      const bestPlacement = achievementsData.timeline.length > 0 ? 
+        Math.min(...achievementsData.timeline.map(a => a.placementValue)) : 0;
+      
+      // Update stats object
+      achievementsData.stats = {
+        totalCTFs: totalCTFs,
+        timelineCTFs: timelineCTFs,
+        featuredCTFs: featuredCTFs,
+        top10Finishes: topPlacements,
+        bestPlacement: bestPlacement > 0 ? ordinalSuffix(bestPlacement) : "N/A",
+        challengesSolved: 42,
+        countriesCompeted: 5
+      };
+    }
     
     // Helper function to add ordinal suffix (1st, 2nd, 3rd, etc.)
     function ordinalSuffix(i) {
@@ -395,7 +413,7 @@
 
     // Function to render stats
     function renderStats() {
-      calculateStats(); // Recalculate stats first
+      calculateStats();
       const container = document.getElementById('stats-container');
       const stats = achievementsData.stats;
       
@@ -456,11 +474,14 @@
     function renderFeaturedAchievements() {
       const container = document.getElementById('featured-achievements');
       
-      container.innerHTML = achievementsData.featured.map(achievement => `
+      const featured = achievementsData.timeline.filter(a => a.featured);
+      
+      container.innerHTML = featured.map(achievement => `
         <div class="feature-card">
-          <i class="${achievement.icon}"></i>
+          <i class="fas fa-trophy"></i>
           <h3>${achievement.title}</h3>
           <p>${achievement.description}</p>
+          <span class="achievement-rank">${achievement.placement}</span>
         </div>
       `).join('');
     }
@@ -473,6 +494,10 @@
       // Get unique years and CTFs
       const years = [...new Set(achievementsData.timeline.map(a => a.year))].sort((a, b) => b - a);
       const ctfs = [...new Set(achievementsData.timeline.map(a => a.ctf))].sort();
+      
+      // Clear existing options (except the first "All" option)
+      while (yearFilter.options.length > 1) yearFilter.remove(1);
+      while (ctfFilter.options.length > 1) ctfFilter.remove(1);
       
       // Add year options
       years.forEach(year => {
@@ -496,6 +521,7 @@
       const yearFilter = document.getElementById('year-filter').value;
       const ctfFilter = document.getElementById('ctf-filter').value;
       const placementFilter = document.getElementById('placement-filter').value;
+      const sortBy = document.getElementById('sort-by').value;
       
       let filtered = achievementsData.timeline;
       
@@ -527,6 +553,25 @@
         }
       }
       
+      // Apply sorting
+      switch(sortBy) {
+        case 'best':
+          filtered.sort((a, b) => a.placementValue - b.placementValue);
+          break;
+        case 'worst':
+          filtered.sort((a, b) => b.placementValue - a.placementValue);
+          break;
+        case 'newest':
+          filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+          break;
+        case 'oldest':
+          filtered.sort((a, b) => new Date(a.date) - new Date(b.date));
+          break;
+        default:
+          // Keep original order
+          break;
+      }
+      
       renderAchievements(filtered);
     }
 
@@ -541,9 +586,10 @@
       document.getElementById('year-filter').addEventListener('change', filterAchievements);
       document.getElementById('ctf-filter').addEventListener('change', filterAchievements);
       document.getElementById('placement-filter').addEventListener('change', filterAchievements);
+      document.getElementById('sort-by').addEventListener('change', filterAchievements);
     });
 
-    // Function to add a new achievement (you can call this from browser console if needed)
+    // Function to add a new achievement
     function addAchievement(newAchievement, type = 'timeline') {
       if (type === 'timeline') {
         achievementsData.timeline.push(newAchievement);
