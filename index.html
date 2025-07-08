@@ -102,6 +102,77 @@
       width: 100%;
     }
     
+    /* Dropdown styles */
+    .dropdown {
+      position: relative;
+      display: inline-block;
+      height: 100%;
+    }
+
+    .dropbtn {
+      background: none;
+      border: none;
+      color: var(--text-primary);
+      font-weight: 600;
+      padding: 0.5rem 0;
+      font-family: inherit;
+      font-size: inherit;
+      cursor: pointer;
+      position: relative;
+      letter-spacing: 0.5px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .dropbtn::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+      transition: width 0.3s ease;
+    }
+
+    .dropbtn:hover::after {
+      width: 100%;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: var(--darker-bg);
+      min-width: 160px;
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+      z-index: 1;
+      border: 1px solid rgba(11, 255, 252, 0.1);
+      border-radius: 0 0 8px 8px;
+      top: 100%;
+    }
+
+    .dropdown-content a {
+      color: var(--text-primary);
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+      text-align: left;
+    }
+
+    .dropdown-content a:hover {
+      background-color: rgba(11, 255, 252, 0.1);
+    }
+
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
+
+    .dropdown:hover .dropbtn {
+      color: var(--neon-blue);
+    }
+    
     main {
       max-width: 1200px;
       margin: 2rem auto;
@@ -431,6 +502,22 @@
         justify-content: center;
       }
       
+      .dropdown {
+        display: block;
+        width: 100%;
+        text-align: center;
+      }
+      
+      .dropdown-content {
+        position: static;
+        display: none;
+        width: 100%;
+      }
+      
+      .dropdown:hover .dropdown-content {
+        display: block;
+      }
+      
       .writeups-container {
         grid-template-columns: 1fr;
       }
@@ -444,7 +531,13 @@
       <p class="tagline">Pushing the boundaries of cybersecurity</p>
       <nav>
         <a href="index.html"><i class="fas fa-home"></i> Home</a>
-        <a href="#latest-writeups"><i class="fas fa-flag"></i> Writeups</a>
+        <div class="dropdown" id="writeups-dropdown">
+          <a href="#writeups" class="dropbtn"><i class="fas fa-flag"></i> Writeups <i class="fas fa-caret-down"></i></a>
+          <div class="dropdown-content" id="writeups-dropdown-content">
+            <a href="#all-writeups">All Writeups</a>
+            <!-- CTF options will be dynamically inserted here -->
+          </div>
+        </div>
         <a href="achievements.html"><i class="fas fa-trophy"></i> Achievements</a>
         <a href="about.html"><i class="fas fa-users"></i> About Us</a>
         <a href="contact.html"><i class="fas fa-envelope"></i> Contact</a>
@@ -456,21 +549,18 @@
     <section class="hero">
       <h2>CTF Writeups & Cybersecurity Insights</h2>
       <p>Welcome to Team Binary_Beasts's knowledge hub, where we break down complex security challenges into digestible solutions. Whether you're a beginner or an experienced hacker, our writeups will help you level up your skills.</p>
-      <a href="#latest-writeups" class="cta-button">Explore Latest Writeups</a>
+      <a href="#all-writeups" class="cta-button">Explore Latest Writeups</a>
     </section>
 
     <section id="latest-writeups">
-      <h2>Latest Writeups</h2>
+      <h2 id="writeups-title">Latest Writeups</h2>
       <p>Check out our most recent challenge breakdowns from top CTF competitions around the world.</p>
       
       <div class="filter-controls">
         <span class="filter-label">Filter by:</span>
         <select id="ctf-filter" class="filter-select">
           <option value="all">All CTFs</option>
-          <option value="Blitz">Blitz CTF</option>
-          <option value="PicoCTF">PicoCTF</option>
-          <option value="HackTheBox">HackTheBox</option>
-          <option value="CyberApocalypse">Cyber Apocalypse</option>
+          <!-- CTF options will be dynamically inserted here -->
         </select>
         
         <select id="difficulty-filter" class="filter-select">
@@ -510,18 +600,19 @@
 
   <script>
     // Disable right-click
-        document.addEventListener('contextmenu', function(e) {
-            e.preventDefault();
-        });
+    document.addEventListener('contextmenu', function(e) {
+      e.preventDefault();
+    });
 
-        // Disable keyboard shortcuts
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'F12' || 
-                (e.ctrlKey && e.shiftKey && e.key === 'I') || 
-                (e.ctrlKey && e.key === 'U')) {
-                e.preventDefault();
-            }
-        });
+    // Disable keyboard shortcuts
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'F12' || 
+          (e.ctrlKey && e.shiftKey && e.key === 'I') || 
+          (e.ctrlKey && e.key === 'U')) {
+        e.preventDefault();
+      }
+    });
+
     // Writeups data - you can easily add/edit/remove writeups here
     const writeupsData = [
       {
@@ -534,64 +625,61 @@
         "description": "A tricky challenge involving an encoded string that was solved using keyboard layout mapping (Workman to QWERTY).",
         "link": "https://medium.com/@i232012/broken-encoding-or-what-ctf-cryptography-challenge-writeup-98c1dda8898a",
         "tags": ["Crypto", "Encoding/Decoding"]
+      },
+      {
+        "id": 2,
+        "title": "SSTI1",
+        "ctf": "PicoCTF",
+        "date": "2024-03-15",
+        "difficulty": "easy",
+        "category": "Web Exploitation",
+        "description": "A web exploitation challenge solved by manipulating JavaScript and leveraging SSTI to access internal variables.",
+        "link": "https://medium.com/@Kamal_S/picoctf-web-exploitation-ssti1-e2363b1885a0",
+        "tags": ["Web", "PHP Injection", "JavaScript"]
       }
-        ,
-      {
-        id: 2,
-        title: "Buffer Overflow Exploit",
-        ctf: "Blitz CTF",
-        date: "2025-03-18",
-        difficulty: "medium",
-        category: "pwn",
-        description: "Step-by-step guide to exploiting a buffer overflow vulnerability in a custom TCP service.",
-        link: "writeups/blitz-buffer-overflow.html",
-        tags: ["BOF", "Binary Exploitation", "ROP"]
-      },
-      {
-        id: 3,
-        title: "Encrypted Message Decoding",
-        ctf: "Blitz CTF",
-        date: "2025-03-20",
-        difficulty: "hard",
-        category: "crypto",
-        description: "Breaking a custom encryption algorithm by analyzing its weaknesses.",
-        link: "writeups/blitz-custom-crypto.html",
-        tags: ["Cryptanalysis", "Custom Algorithm", "XOR"]
-      },
-      {
-        id: 4,
-        title: "Memory Forensics Analysis",
-        ctf: "Blitz CTF",
-        date: "2025-03-22",
-        difficulty: "medium",
-        category: "forensics",
-        description: "Extracting hidden data from a memory dump using Volatility framework.",
-        link: "writeups/blitz-memory-forensics.html",
-        tags: ["Memory Dump", "Volatility", "Malware Analysis"]
-      },
-      {
-        id: 5,
-        title: "WebAssembly Reversing",
-        ctf: "PicoCTF",
-        date: "2025-04-05",
-        difficulty: "hard",
-        category: "reversing",
-        description: "Reverse engineering a WebAssembly binary to find the hidden flag.",
-        link: "writeups/picoctf-wasm-reversing.html",
-        tags: ["WASM", "Reverse Engineering", "JavaScript"]
-      },
-      {
-        id: 6,
-        title: "XXE Vulnerability Exploit",
-        ctf: "HackTheBox",
-        date: "2025-04-10",
-        difficulty: "medium",
-        category: "web",
-        description: "Exploiting an XML External Entity processing vulnerability to read server files.",
-        link: "writeups/htb-xxe-exploit.html",
-        tags: ["XXE", "File Disclosure", "XML"]
-      }
+
+      // Add more writeups here following the same format
     ];
+
+    // Function to get unique CTFs from writeups data
+    function getUniqueCTFs() {
+      const ctfSet = new Set();
+      writeupsData.forEach(writeup => {
+        ctfSet.add(writeup.ctf);
+      });
+      return Array.from(ctfSet).sort();
+    }
+
+    // Function to populate CTF filters
+    function populateCTFFilters() {
+      const uniqueCTFs = getUniqueCTFs();
+      const ctfFilter = document.getElementById('ctf-filter');
+      const dropdownContent = document.getElementById('writeups-dropdown-content');
+      
+      // Clear existing options (keeping "All CTFs" and "All Writeups")
+      while (ctfFilter.options.length > 1) {
+        ctfFilter.remove(1);
+      }
+      
+      // Remove all CTF options from dropdown (keeping "All Writeups")
+      const dropdownLinks = dropdownContent.querySelectorAll('a:not([href="#all-writeups"])');
+      dropdownLinks.forEach(link => link.remove());
+      
+      // Add CTF options to both filter and dropdown
+      uniqueCTFs.forEach(ctf => {
+        // Add to filter dropdown
+        const option = document.createElement('option');
+        option.value = ctf;
+        option.textContent = ctf;
+        ctfFilter.appendChild(option);
+        
+        // Add to navigation dropdown
+        const link = document.createElement('a');
+        link.href = `#${ctf.toLowerCase().replace(/\s+/g, '-')}-writeups`;
+        link.textContent = ctf;
+        dropdownContent.appendChild(link);
+      });
+    }
 
     // Function to render writeup cards
     function renderWriteups(writeups) {
@@ -632,7 +720,7 @@
       const categoryFilter = document.getElementById('category-filter').value;
       
       const filteredWriteups = writeupsData.filter(writeup => {
-        return (ctfFilter === 'all' || writeup.ctf.includes(ctfFilter)) &&
+        return (ctfFilter === 'all' || writeup.ctf === ctfFilter) &&
                (difficultyFilter === 'all' || writeup.difficulty === difficultyFilter) &&
                (categoryFilter === 'all' || writeup.category === categoryFilter);
       });
@@ -640,8 +728,42 @@
       renderWriteups(filteredWriteups);
     }
 
+    // Function to filter writeups by CTF
+    function filterByCTF(ctfName) {
+      if (ctfName === 'all') {
+        document.getElementById('writeups-title').textContent = 'Latest Writeups';
+        document.getElementById('ctf-filter').value = 'all';
+        renderWriteups(writeupsData);
+      } else {
+        document.getElementById('writeups-title').textContent = `${ctfName} Writeups`;
+        document.getElementById('ctf-filter').value = ctfName;
+        const filtered = writeupsData.filter(writeup => writeup.ctf === ctfName);
+        renderWriteups(filtered);
+      }
+    }
+
+    // Function to handle hash changes
+    function handleHashChange() {
+      const hash = window.location.hash;
+      const uniqueCTFs = getUniqueCTFs();
+      
+      // Check if hash matches any CTF
+      const matchingCTF = uniqueCTFs.find(ctf => 
+        hash === `#${ctf.toLowerCase().replace(/\s+/g, '-')}-writeups`
+      );
+      
+      if (matchingCTF) {
+        filterByCTF(matchingCTF);
+      } else if (hash === '#all-writeups' || hash === '#latest-writeups') {
+        filterByCTF('all');
+      }
+    }
+
     // Initialize the page
     document.addEventListener('DOMContentLoaded', () => {
+      // Populate CTF filters based on available writeups
+      populateCTFFilters();
+      
       // Render all writeups initially
       renderWriteups(writeupsData);
       
@@ -649,11 +771,18 @@
       document.getElementById('ctf-filter').addEventListener('change', filterWriteups);
       document.getElementById('difficulty-filter').addEventListener('change', filterWriteups);
       document.getElementById('category-filter').addEventListener('change', filterWriteups);
+      
+      // Handle initial hash
+      handleHashChange();
     });
+
+    // Listen for hash changes
+    window.addEventListener('hashchange', handleHashChange);
 
     // Function to add a new writeup (you can call this from browser console if needed)
     function addWriteup(newWriteup) {
       writeupsData.push(newWriteup);
+      populateCTFFilters(); // Update filters with new CTF if needed
       filterWriteups(); // Re-render with the new writeup
     }
   </script>
