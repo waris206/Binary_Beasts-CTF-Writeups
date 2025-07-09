@@ -637,10 +637,36 @@
         "link": "https://medium.com/@Kamal_S/picoctf-web-exploitation-ssti1-e2363b1885a0",
         "tags": ["Web", "PHP Injection", "JavaScript"]
       }
-
+      
       // Add more writeups here following the same format
     ];
-
+          // Function to get unique categories from writeups data
+      function getUniqueCategories() {
+        const categorySet = new Set();
+        writeupsData.forEach(writeup => {
+          categorySet.add(writeup.category.toLowerCase());
+        });
+        return Array.from(categorySet).sort();
+      }
+      // Function to populate category filter
+        function populateCategoryFilter() {
+          const uniqueCategories = getUniqueCategories();
+          const categoryFilter = document.getElementById('category-filter');
+          
+          // Clear existing options (keeping "All Categories")
+          while (categoryFilter.options.length > 1) {
+            categoryFilter.remove(1);
+          }
+          
+          // Add category options based on actual data
+          uniqueCategories.forEach(category => {
+            const option = document.createElement('option');
+            option.value = category;
+            // Capitalize first letter for display
+            option.textContent = category.charAt(0).toUpperCase() + category.slice(1);
+            categoryFilter.appendChild(option);
+          });
+        }
     // Function to get unique CTFs from writeups data
     function getUniqueCTFs() {
       const ctfSet = new Set();
@@ -713,20 +739,20 @@
       });
     }
 
-    // Function to filter writeups
-    function filterWriteups() {
-      const ctfFilter = document.getElementById('ctf-filter').value;
-      const difficultyFilter = document.getElementById('difficulty-filter').value;
-      const categoryFilter = document.getElementById('category-filter').value;
-      
-      const filteredWriteups = writeupsData.filter(writeup => {
-        return (ctfFilter === 'all' || writeup.ctf === ctfFilter) &&
-               (difficultyFilter === 'all' || writeup.difficulty === difficultyFilter) &&
-               (categoryFilter === 'all' || writeup.category === categoryFilter);
-      });
-      
-      renderWriteups(filteredWriteups);
-    }
+            // Function to filter writeups
+        function filterWriteups() {
+          const ctfFilter = document.getElementById('ctf-filter').value;
+          const difficultyFilter = document.getElementById('difficulty-filter').value;
+          const categoryFilter = document.getElementById('category-filter').value;
+          
+          const filteredWriteups = writeupsData.filter(writeup => {
+            return (ctfFilter === 'all' || writeup.ctf === ctfFilter) &&
+                  (difficultyFilter === 'all' || writeup.difficulty === difficultyFilter) &&
+                  (categoryFilter === 'all' || writeup.category.toLowerCase() === categoryFilter.toLowerCase());
+          });
+          
+          renderWriteups(filteredWriteups);
+        }
 
     // Function to filter writeups by CTF
     function filterByCTF(ctfName) {
@@ -760,21 +786,23 @@
     }
 
     // Initialize the page
-    document.addEventListener('DOMContentLoaded', () => {
-      // Populate CTF filters based on available writeups
-      populateCTFFilters();
-      
-      // Render all writeups initially
-      renderWriteups(writeupsData);
-      
-      // Add event listeners to filters
-      document.getElementById('ctf-filter').addEventListener('change', filterWriteups);
-      document.getElementById('difficulty-filter').addEventListener('change', filterWriteups);
-      document.getElementById('category-filter').addEventListener('change', filterWriteups);
-      
-      // Handle initial hash
-      handleHashChange();
-    });
+   // Initialize the page
+      document.addEventListener('DOMContentLoaded', () => {
+        // Populate filters based on available writeups
+        populateCTFFilters();
+        populateCategoryFilter(); // Add this line
+        
+        // Render all writeups initially
+        renderWriteups(writeupsData);
+        
+        // Add event listeners to filters
+        document.getElementById('ctf-filter').addEventListener('change', filterWriteups);
+        document.getElementById('difficulty-filter').addEventListener('change', filterWriteups);
+        document.getElementById('category-filter').addEventListener('change', filterWriteups);
+        
+        // Handle initial hash
+        handleHashChange();
+      });
 
     // Listen for hash changes
     window.addEventListener('hashchange', handleHashChange);
